@@ -1,0 +1,292 @@
+/* ---------header-----------*/
+body { 
+    margin: 0;
+    background-color: var(--bodybackground-color);
+    font-family: "Montserrat", sans-serif;
+    padding-top: 6%;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+td {
+    width: 25%;
+}
+
+
+
+/*--------- 로그인 페이지 ----------*/
+
+*,:after,:before{box-sizing:border-box}
+.clearfix:after,.clearfix:before{content:'';display:table}
+.clearfix:after{clear:both;display:block}
+
+a{
+    color:inherit;text-decoration:none
+}
+
+.login-wrap{
+    width:100%;
+    margin:auto;
+    max-width:550px;
+    min-height:1000px;
+    position:relative;
+    background:url("/images/image_login.jpeg") no-repeat center;
+    background-size: 100%;
+    box-shadow:0 12px 15px 0 rgba(0,0,0,.24),0 17px 50px 0 rgba(0,0,0,.19);
+}
+.login-html{
+    width:100%;
+    height:100%;
+    position:absolute;
+    padding:90px 70px 50px 70px;
+    background:rgba(40,57,101,.45);
+}
+
+.login-html .sign-in-htm,
+.login-html .sign-up-htm{
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    position:absolute;
+}
+
+.login-html .sign-in,
+.login-html .sign-up,
+.login-form .group .check{
+    display:none;
+}
+
+.login-html .tab,
+.login-form .group .label,
+.login-form .group .button{
+    text-transform:uppercase;
+}
+.login-html .tab{
+    font-size:22px;
+    margin-right:15px;
+    padding-bottom:5px;
+    margin:0 15px 10px 0;
+    display:inline-block;
+    border-bottom:2px solid transparent;
+}
+.login-html .sign-in:checked + .tab,
+.login-html .sign-up:checked + .tab{
+    color:#fff;
+    border-color:#172d52;
+}
+.login-form{
+    min-height:345px;
+    position:relative;
+}
+.login-form .group{
+    margin-bottom:15px;
+}
+.login-form .group .label,
+.login-form .group .input,
+.login-form .group .button{
+    width:100%;
+    color:#fff;
+    display:block;
+}
+.login-form .group .input,
+.login-form .group .button{
+    border:none;
+    padding:15px 20px;
+    border-radius:25px;
+    background:rgba(255,255,255,.1);
+}
+.login-form .group input[data-type="password"]{
+    text-security:circle;
+    -webkit-text-security:circle;
+}
+.login-form .group .label{
+    color:rgb(255, 255, 255);
+    font-size:12px;
+}
+.login-form .group .button{
+    background:#172d52;
+}
+.login-form .group label .icon{
+    width:15px;
+    height:15px;
+    border-radius:2px;
+    position:relative;
+    display:inline-block;
+    background:rgba(17, 15, 151, 0.1);
+}
+.hr{
+    height:2px;
+    margin:60px 0 50px 0;
+    background:rgba(255, 255, 255, 0.2);
+}
+.foot-lnk{
+    text-align:center;
+    text-decoration: none;
+    color: white;
+}
+.fp {
+    text-decoration: none;
+    color: white;
+}
+
+/* header 영역 */
+
+.imglogo {
+    margin-left: 270px;
+}
+
+/* --------------------------------footer 영역-------------------------------*/
+
+#footer {
+    background: white;
+    padding: 0 0 30px 0;
+    color: black;
+    font-size: 14px;
+    }
+
+    #footer .footer-top {
+    background: white;
+    border-bottom: 1px solid #222222;
+    padding: 60px 0 30px 0;
+    }
+
+    #footer .footer-top .footer-info {
+    margin-bottom: 30px;
+    }
+
+    #footer .footer-top .footer-info h3 {
+    font-size: 28px;
+    margin: 0 0 20px 0;
+    padding: 2px 0 2px 0;
+    line-height: 1;
+    font-weight: 700;
+    text-transform: uppercase;
+    }
+
+    #footer .footer-top .footer-info h3 span {
+    color: #ffc451;
+    }
+
+    #footer .footer-top .footer-info p {
+    font-size: 14px;
+    line-height: 24px;
+    margin-bottom: 0;
+    font-family: "Raleway", sans-serif;
+    color: black;
+    }
+
+    #footer .footer-top .social-links a {
+    font-size: 18px;
+    display: inline-block;
+    background: #292929;
+    color: black;
+    line-height: 1;
+    padding: 8px 0;
+    margin-right: 4px;
+    border-radius: 4px;
+    text-align: center;
+    width: 36px;
+    height: 36px;
+    transition: 0.3s;
+    }
+
+    #footer .footer-top .social-links a:hover {
+    background: #ffc451;
+    color: #151515;
+    text-decoration: none;
+    }
+
+    #footer .footer-top h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: black;
+    position: relative;
+    padding-bottom: 12px;
+    }
+
+    #footer .footer-top .footer-links {
+    margin-bottom: 30px;
+    }
+
+    #footer .footer-top .footer-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    }
+
+    #footer .footer-top .footer-links ul i {
+    padding-right: 2px;
+    color: #ffc451;
+    font-size: 18px;
+    line-height: 1;
+    }
+
+    #footer .footer-top .footer-links ul li {
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    }
+
+    #footer .footer-top .footer-links ul li:first-child {
+    padding-top: 0;
+    }
+
+    #footer .footer-top .footer-links ul a {
+    color: black;
+    transition: 0.3s;
+    display: inline-block;
+    line-height: 1;
+    }
+
+    #footer .footer-top .footer-links ul a:hover {
+    color: #ffc451;
+    }
+
+    #footer .footer-top .footer-newsletter form {
+    margin-top: 30px;
+    background: black;
+    padding: 6px 10px;
+    position: relative;
+    border-radius: 4px;
+    }
+
+    #footer .footer-top .footer-newsletter form input[type=email] {
+    border: 0;
+    padding: 4px;
+    width: calc(100% - 110px);
+    }
+
+    #footer .footer-top .footer-newsletter form input[type=submit] {
+    position: absolute;
+    top: 0;
+    right: -2px;
+    bottom: 0;
+    border: 0;
+    background: none;
+    font-size: 16px;
+    padding: 0 20px;
+    background: #ffc451;
+    color: white;
+    transition: 0.3s;
+    border-radius: 0 4px 4px 0;
+    }
+
+    #footer .footer-top .footer-newsletter form input[type=submit]:hover {
+    background: #ffcd6b;
+    }
+
+    #footer .copyright {
+    text-align: center;
+    padding-top: 30px;
+    }
+
+    #footer .credits {
+    padding-top: 10px;
+    text-align: center;
+    font-size: 13px;
+    color: black;
+    }

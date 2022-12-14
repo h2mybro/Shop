@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th = "http://www.thymeleaf.org"
+    xmlns:layout = "http://www.ultrap.net.nz/thymeleaf/layout">
+    <head>
+        <meta charset="utf-8">
+        <title>Choo War</title>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+        <link th:href="@{/css/style.css}" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+
+$(document).ready(function(){ 
+	var objDragAndDrop = $("#fileClick");
+	var objDragAndDrop = $("#fileClick");
+	//input type=file에 onchange 발생 이벤트
+	$("#input_file").on("change", function(e) {
+		var files = e.originalEvent.target.files;
+		fileCheck(files);
+	});
+
+	//fileClick 영역 클릭 시 이벤트
+	objDragAndDrop.on('click',function (e){
+        $('#input_file').trigger('click');
+    });
+	
+	$(document).on("dragenter","#fileClick",function(e){
+    	e.stopPropagation(); 
+    	e.preventDefault();
+    	$(this).css('border', '2px solid #0B85A1');
+    });
+
+	$(document).on("dragover","#fileClick",function(e){
+    	e.stopPropagation();
+    	e.preventDefault();
+	});
+	//fileClick 영역에 파일 Drop시 이벤트
+	$(document).on("drop","#fileClick",function(e){
+        e.preventDefault();
+    	var files = e.originalEvent.dataTransfer.files;
+	    fileCheck(files);
+	});
+
+	$(document).on('dragenter', function (e){
+    	e.stopPropagation();
+    	e.preventDefault();
+	});
+
+	$(document).on('dragover', function (e){
+  		e.stopPropagation();
+  		e.preventDefault();
+  		objDragAndDrop.css('border', '2px dotted #0B85A1');
+	});
+	
+	$(document).on('drop', function (e){
+    	e.stopPropagation();
+    	e.preventDefault();
+	});
+
+});
+
+var uploadCountLimit = 5; // 업로드 가능한 파일 갯수
+var fileCount = 0; // 파일 현재 필드 숫자 totalCount랑 비교값
+var fileNum = 0; // 파일 고유넘버
+var content_files = new Array(); // 첨부파일 배열
+var rowCount=0;
+
+function fileCheck(files) {
+
+	//var files = e.target.files;
+	var filesArr = Array.prototype.slice.call(files);
+	
+    // 파일 개수 확인 및 제한
+    if (fileCount + filesArr.length > uploadCountLimit) {
+		alert('파일은 최대 '+uploadCountLimit+'개까지 업로드 할 수 있습니다.');
+		return;
+    } else {
+		fileCount = fileCount + filesArr.length;
+    }
+
+    var i =0;
+	filesArr.forEach(function (f) {
+		var reader = new FileReader();
+		reader.onload = function (e) {
+			content_files.push(f);
+			
+	        if(filesArr[i].size > 1073741824) { alert('파일 사이즈는 1GB를 초과할수 없습니다.'); return; }
+		
+	    	rowCount++;
+	        var row="odd";
+	        if(rowCount %2 ==0) row ="even";
+	        var statusbar = $("<div class='statusbar "+row+"' id='file" + fileNum +"'></div>");
+	        var filename = $("<div class='filename'>" + filesArr[i].name + "</div>").appendTo(statusbar);
+	        
+	        var sizeStr="";
+	        var sizeKB = filesArr[i].size/1024;
+	        if(parseInt(sizeKB) > 1024){
+	        	var sizeMB = sizeKB/1024;
+	            sizeStr = sizeMB.toFixed(2)+" MB";
+	        }else sizeStr = sizeKB.toFixed(2)+" KB";	        
+	        
+	        var size = $("<div class='filesize'>" + sizeStr + "</div>").appendTo(statusbar);
+	        var progressBar = $("<div class='progressBar'><div></div></div>").appendTo(statusbar);
+	        var btn_delete = $("<div class='btn_delete' onclick=fileDelete('file" + fileNum + "')>삭제</div></div>").appendTo(statusbar);
+	       
+			$("#fileClick").after(statusbar); 
+			
+	        fileNum ++;
+       
+	        console.log(filesArr[i]);
+	        i++;  
+	      
+	      };
+	      reader.readAsDataURL(f);
+    });
+	
+	$("#input_file").val("");	
+
+}	
+
+function fileDelete(fileNum){
+    var no = fileNum.replace(/[^0-9]/g, "");
+    content_files[no].is_delete = true;
+	$('#' + fileNum).remove();
+	fileCount --;
+}  
+
+var progressBarWidth = 100;
+
+function setProgress(progress){       
+    //var ActiveprogressBarWidth =progress*progressBarWidth/ 100;  
+    $(".progressBar div").animate({ width: progress }, 10).html(progress + "% ");
+}
+
+function sendFileToServer()
+{
+	var form = $("#formdata")[0];
+ 	var formData = new FormData(form);
+	for (var x = 0; x < content_files.length; x++) {
+			if(!content_files[x].is_delete) { 
+						
+				formData.append("SendToFileList", content_files[x]);
+			}
+	}
+
+	let uploadURL = "/admin/board/fileUpload?kind=I"; 
+     
+	$.ajax({
+        url: uploadURL,
+        type: "POST",
+        contentType:false,
+        processData: false,
+        cache: false,
+        enctype: "multipart/form-data",
+        data: formData,
+        xhr:function(){
+        	var xhr = $.ajaxSettings.xhr();
+        	xhr.upload.onprogress = function(e){
+        		var per = e.loaded * 100/e.total;
+        		setProgress(per);
+        	};
+        	return xhr;        	
+        },
+        success: function(data){
+        	$("#WriteForm").attr("action", "/admin/board/writeWithFile").submit();
+        },
+        error: function (xhr, status, error) {
+       	    	alert("서버오류로 파일 업로드가 안됩니다. 잠시 후 다시 시도해주시기 바랍니다.");
+       	     return false;
+       	}   
+       
+    }); 
+	   	    
+ }
+
+function registerForm(){
+
+	if($("#mtitle").val()=='') { alert("제목을 입력하세요!!!");  $("#mtitle").focus(); return false;  }
+	if($("#mcontent").val()=='') { alert("내용을 입력하세요!!!");  $("#mcontent").focus(); return false;  }
+
+	if(content_files.length != 0) sendFileToServer();
+	if(content_files.length == 0) $("#WriteForm").attr("action", "/admin/board/write").submit();
+	
+}
+
+</script>
+
+</head>   
+<body>
+    <div th:replace = "fragments/headerAdmin::header"></div>
+        <div class="container">
+			<h4>회원 문의</h4>
+            <form id="WriteForm" method="post" enctype="multipart/form-data">
+                <div class="mb-3 row">
+                    <label for="username" class="col-sm-2 col-form-label">[[ ${session.username} ]] 님</label>
+                    <input type="hidden" id="mwriter" name="mwriter" th:value="${session.username}">
+				<div class="col-sm-10">
+					<label for="userid" class="col-sm-4 col-form-label">[[ ${session.userid} ]] 님</label>
+					<input type="hidden" id="userid" name="userid" th:value="${session.userid}">
+					</div>
+				</div>
+
+                <div class="mb-3 row">
+                    <label for="mtitle" class="col-sm-2 col-form-label">제목</label>
+                    <div class="col-sm-10">
+                      <input type="text" name="mtitle" class="form-control" id="mtitle" placeholder="제목을 입력하세요">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="mcontent" class="col-sm-2 col-form-label">내용</label>
+                    <div class="col-sm-10">
+                    <textarea class="form-control" name="mcontent" id="mcontent" rows="3" placeholder="여기에 내용을 입력하세요"></textarea>
+                    </div>
+                </div>
+			</form>
+			<div class="fileuploadForm">
+				<input type="file" id="input_file" name="uploadFile" multiple />
+				<div id="fileClick">파일 첨부를 하기 위해서는 클릭하거나 여기로 파일을 드래그 하세요.<br>첨부파일은 최대 5개까지 등록이 가능합니다.</div>
+				  <div id="fileUploadList"></div>
+			</div>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="button" class="btn btn-outline-dark" onclick="registerForm()">등록</button>
+                <button type="button" class="btn btn-outline-dark" onclick="history.back()">취소</button>
+            </div>
+        </div>
+    <div th:replace = "fragments/footer::footer"></div>
+</body>
+</html>

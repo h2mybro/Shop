@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th = "http://www.thymeleaf.org">
+
+    <div th:fragment="header">
+        <div class="fixed-top">
+            <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+                <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                    <a href="/" class="imglogo"><img src="/images/CW_logo.jpg" height="70" width="70"></a>
+                </ul>
+
+                <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                    <li><a href="/item/itemViewPage" class="nav-link px-2 link-dark">NEW COLLECTION</a></li>
+                    <li><a href="/item/itemViewPage" class="nav-link px-2 link-secondary">WOMEN</a></li>
+                    <li><a href="/item/itemViewPage" class="nav-link px-2 link-dark">MEN</a></li>
+                    <li><a href="/board/list" class="nav-link px-2 link-dark">Q&A</a></li>
+                    <li><a href="#" class="nav-link px-2 link-dark">About</a></li>
+                </ul>
+
+                <div class="col-md-3 text-end">
+                    <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                        <li><a href="/member/login" class="nav-link px-2 link-dark">LOGIN</a></li>
+                        <li><a href="#" class="nav-link px-2 link-dark">BAG</a></li>
+                    </ul>
+                </div>
+
+            </header>
+        </div>
+    
+    </div>
+</html>

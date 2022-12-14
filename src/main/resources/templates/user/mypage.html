@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th = "http://www.thymeleaf.org"
+    xmlns:layout = "http://www.ultrap.net.nz/thymeleaf/layout">
+    <head>
+        <meta charset="utf-8">
+        <title>Choo War</title>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+        <link th:href="@{/css/style.css}" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+        <script>
+            function memberInfoDelete() {
+                
+                if(confirm("정말로 사용자 탈퇴 하시겠습니까?") == true) {
+                    alert("사용자 정보기 삭제 되었습니다."); 
+                    location.href='/user/memberInfoDelete';
+
+                }
+            }
+
+        </script>
+    </head>
+    <body>
+
+        <div th:replace = "fragments/headerLogout::header"></div>
+
+        <div class="main" align="center">
+
+            <div class="mbrInfoView">
+                <h1 style="text-align:center;">유저 정보</h1>
+                    <div class="userid">아이디 : [[ ${userid} ]]</div>
+                    <div class="username">이름 : [[ ${session.username} ]]</div>
+                    <div class="telno">연락처 : [[ ${telno} ]]</div>
+                    <div class="address">주소 : [[ ${address} ]]</div>
+                    <div class="address2">상세주소 : [[ ${address2} ]]</div>
+                    
+                    <div th:if="${session.role == 'ADMIN'}"class="ac">권한 : 마스터 관리자 </div>
+                    <div th:if="${session.role == 'USER'}"class="ac">권한 : 일반 사용자 </div>
+            </div>     
+
+            <br><br>
+
+            <div class="bottom_menu" align="center">
+                &nbsp;&nbsp;
+                <a href="/user/userHomepage">처음으로</a> &nbsp;&nbsp;
+                <a href="/user/memberInfoModify">기본정보 변경</a> &nbsp;&nbsp;
+                <a href="/user/memberPasswordModify">패스워드 변경</a> &nbsp;&nbsp;
+                <a href="javascript:memberInfoDelete()">회원탈퇴</a> &nbsp;&nbsp;
+            </div>
+
+            <br><br>
+        </div>
+
+        <div th:replace = "fragments/footer::footer"></div>
+
+    </body>
+    
+</html>

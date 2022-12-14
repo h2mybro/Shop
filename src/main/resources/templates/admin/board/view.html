@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th = "http://www.thymeleaf.org"
+    xmlns:layout = "http://www.ultrap.net.nz/thymeleaf/layout">
+    <head>
+        <meta charset="utf-8">
+        <title>Choo War</title>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+        <link th:href="@{/css/style.css}" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+        <script>
+
+        function mDelete(){
+            if(confirm("정말 삭제 하시겠습니까?")==true) location.href='/admin/board/delete?seqno=[[${view.seqno}]]'
+        }
+
+        function fileDownload(fileseqno){
+            
+            location.href='/admin/board/fileDownload?fileseqno=' + fileseqno;
+        }
+
+        // 댓글 등록
+        function replyRegister() { //form 데이터 전송 --> 반드시 serialize()를 해야 한다.
+            
+            if($("#replycontent").val() == "") {alert("댓글을 입력하세요."); $("#replycontent").focus(); return false;}
+            
+            var queryString = $("form[name=replyForm]").serialize();
+            $.ajax({
+                url : "reply?option=I",
+                type : "post",
+                datatype : "json",
+                data : queryString,
+                success : replyList,
+                error : function(data) {
+                            alert("서버오류 문제로 댓글 등록이 실패 했습니다. 잠시 후 다시 시도해주시기 바랍니다.");
+                            return false;
+                }
+            }); //End of ajax
+            $("#replycontent").val("");	
+        }
+
+        //댓글 목록 보기
+        function replyList(data){
+            
+            var session_userid = '[[${session.userid}]]';
+            const jsonInfo = data;
+            
+            var result = "";
+            for(const i in jsonInfo){
+                
+                result += "<div id='replyListView'>";
+                result += "<div id = '" + jsonInfo[i].replyseqno + "' style='font-size: 0.8em'>";
+                result += "작성자 : " + jsonInfo[i].replywriter;
+                
+                if(jsonInfo[i].userid == session_userid) {
+                    result += "[<a href=" + "'javascript:replyModify(" + jsonInfo[i].replyseqno + ")' style='cursor:pointer;'>수정</a> | " ;
+                    result += "<a href=" + "'javascript:replyDelete(" + jsonInfo[i].replyseqno + ")' style='cursor:pointer;'>삭제</a>]" ;
+                }
+                
+                result += "&nbsp;&nbsp;" + jsonInfo[i].replyregdate
+                result += "<div style='width:90%; height: auto; border-top: 1px solid gray; overflow: auto;'>";
+                result += "<pre class='" + jsonInfo[i].replyseqno + "'>" + jsonInfo[i].replycontent + "</pre></div>";
+                result += "</div>";
+                result += "</div><br>";
+            }
+            $("#replyListView").remove();
+            $("#replyList").html(result);
+        }
+
+
+
+        function replyDelete(replyseqno) { 
+            var rseqno = replyseqno
+            if(confirm("정말로 삭제하시겠습니까?") == true) {
+                var queryString = { "replyseqno": replyseqno, "seqno": "[[${view.seqno}]]" };
+                $.ajax({
+                    url : "reply?option=D",
+                    type : "post",
+                    data : queryString,
+                    dataType : "json",
+                    success : replyList,
+                    error : function(data) {
+                                alert("서버오류 문제로 댓글 등록이 실패 했습니다. 잠시 후 다시 시도해주시기 바랍니다.");
+                                return false;
+                    }
+                }); //End od ajax
+            }
+        }
+
+        function replyModify(replyseqno) {
+
+            var replyContent = $("." + replyseqno).html();
+            
+            var strReplyList = "<form id='formModify' name='formModify' method='POST'>"
+                            + "작성자 : [[${session.username}]]&nbsp;"
+                            + "<input type='button' id='btn_replyModify' value='수정'>"
+                            + "<input type='button' id='btn_replyModifyCancel' value='취소'>"
+                            + "<input type='hidden' name='replyseqno' value='" + replyseqno + "'>"
+                            + "<input type='hidden' name='seqno' value=[[${view.seqno}]]>"
+                            + "<input type='hidden' id='writer' name='replywriter' value='[[${session.username}]]'>"
+                            + "<input type='hidden' id='userid' name='userid' value='[[${session.userid}]]'><br>"
+                            + "<textarea id='replycontent' name='replycontent' cols='80' rows='5' maxlength='150' placeholder='글자수:150자 이내'>" + replyContent + "</textarea><br>"
+                            + "</form>";
+            $('#' + replyseqno).after(strReplyList);				
+            $('#' + replyseqno).remove();
+
+            $("#btn_replyModify").on("click", function(){
+                var queryString = $("form[name=formModify]").serialize();
+                $.ajax({
+                    url : "reply?option=U",
+                    type : "post",
+                    dataType : "json",
+                    data : queryString,
+                    success : replyList,
+                    error : function(data) {
+                        alert("서버오류 문제로 댓글 등록이 실패 했습니다. 잠시 후 다시 시도해주시기 바랍니다.");
+                        return false;
+                    }
+                }); //End of $.ajax
+            }); //End of $("#btn_replyModify")
+	
+	 $("#btn_replyModifyCancel").on("click", function(){
+		 if(confirm("정말로 취소하시겠습니까?") == true  ) { $("#replyListView").remove(); startupPage(); }
+	 });	 
+	
+        }
+            
+        function replyCancel() { 
+                if(confirm("정말로 취소 하시겠습니까?") == true) { $("#replyContent").val(""); $("#replyContent").focus(); }
+        }
+
+        </script>
+    </head>
+    <div th:replace = "fragments/headerAdmin::header"></div>
+    <body>
+    <div class="container">
+        <!-- 브래드크럼 -->
+        <div class="mb-3 row">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="/">Home</a></li>
+              <li class="breadcrumb-item"><a href="/admin/board/list">Q&A</a></li>
+              <li class="breadcrumb-item active" aria-current="page">문의하기</li>
+            </ol>
+          </nav>
+        </div>
+
+        <!-- 메인 컨텐츠 -->
+        <div class="mb-3 row">
+            <label for="mwriter" class="col-sm-2 col-form-label">[[${view.mwriter}]] 님</label>
+            <div class="col-sm-10">
+                <label for="staticEmail" class="col-sm-4 col-form-label">[[ ${session.userid} ]] </label>
+                <input type="hidden" id="userid" name="userid" th:value="${session.userid}">
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="mtitle" class="col-sm-2 col-form-label">제목</label>
+            <div class="col-sm-10">
+                <label for="mtitle" class="col-sm-4 col-form-label">[[ ${view.mtitle} ]] </label>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="mregDate" class="col-sm-2 col-form-label">날짜</label>
+            <div class="col-sm-10">
+                <label for="mtitle" class="col-sm-4 col-form-label">[[${#temporals.format(view.mregdate,'yyyy-MM-dd HH:mm:ss')}]]</label>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="mcontent" class="col-sm-2 col-form-label">내용</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" name="mcontent" id="mcontent" rows="3" placeholder="여기에 내용을 입력하세요">[[${view.mcontent}]]</textarea>
+
+            </div>
+        </div>
+
+            <div class="fileForm">
+                <th:block th:each="file:${fileListView}" style="text-align:left;">
+                    <div class="filename">파일명 : <a th:href="@{'/admin/board/fileDownload?fileseqno=' + ${file.fileseqno}}">[[${file.org_filename}]]</a>&nbsp( [[${file.filesize}]] Byte)<br></div>
+                </th:block>
+            </div>
+        
+        
+        <ul class="nav justify-content-end">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" th:href="@{'/admin/board/list?page=' + 
+              ${pageNum} + '&searchType=' + ${searchType} + '&keyword=' + ${keyword}}"> 목록보기 </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/board/write">글 작성</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{'/admin/board/modify?seqno=' + ${view.seqno} + 
+                '&page=' + ${pageNum} + '&searchType=' + ${searchType} + '&keyword=' + ${keyword}}"> 수정 </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="javascript:mDelete()">삭제</a>
+            </li>
+            </th:block>
+          </ul>
+
+        
+        <hr class="hr-6">
+        <div class="replyDiv">
+            <form id="replyForm" name="replyForm" method="POST">
+                <div class="mb-3 row">
+                    <label for="mwriter" class="col-sm-2 col-form-label">[[${view.mwriter}]] 님</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" name="replycontent" id="replycontent" rows="3" placeholder="댓글을 입력하세요"></textarea>
+                    </div>
+                </div>
+                <input type="hidden" name="seqno" th:value="${view.seqno}">
+                <input type="hidden" name="replywriter" th:value="${session.username}">
+                <input type="hidden" name="userid" th:value="${session.userid}">
+            </form>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button class="btn btn-" type="button" id="btn_mreply" onclick="replyRegister()">댓글 등록</button>
+            </div>
+                <div id="replyList" style="width:100%; height:600px; overflow:auto;">
+                    <div id="replyListView"></div> 
+                </div><!-- replyList End  -->		
+        </div>
+                </div>
+            </div>
+        </div>
+        <div th:replace = "fragments/footer::footer"></div>
+    </body>
+</html>
